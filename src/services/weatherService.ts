@@ -7,9 +7,27 @@ export interface WeatherData {
 
 export const getWeather = async (lat: number, lon: number): Promise<WeatherData> => {
   try {
+    // Get API key from environment
+    const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+    
+    if (!apiKey) {
+      console.warn('OpenWeather API key not found, using mock data');
+      return {
+        temperature: 20,
+        condition: 'sunny',
+        windSpeed: 5,
+        humidity: 65,
+      };
+    }
+
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=YOUR_API_KEY&units=metric`
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
     );
+
+    if (!response.ok) {
+      throw new Error(`Weather API error: ${response.status}`);
+    }
+
     const data = await response.json();
     
     // Map OpenWeather conditions to our simplified conditions
