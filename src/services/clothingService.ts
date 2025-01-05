@@ -3,7 +3,7 @@ interface ClothingItem {
   description: string;
 }
 
-interface ClothingRecommendation {
+export interface ClothingRecommendation {
   top: ClothingItem;
   bottom: ClothingItem;
   accessories: ClothingItem[];
