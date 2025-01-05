@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { getWeather, WeatherData } from '@/services/weatherService';
 import { getClothingRecommendation } from '@/services/clothingService';
 import { useToast } from '@/components/ui/use-toast';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const WeatherDisplay = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -57,6 +58,28 @@ const WeatherDisplay = () => {
     }
   };
 
+  const getClothingImage = (type: string, condition: string, temperature: number) => {
+    // Base path for clothing images
+    const basePath = '/clothing/';
+    
+    if (type === 'top') {
+      if (temperature < 10) {
+        return `${basePath}winter-coat.jpg`;
+      } else if (temperature < 20) {
+        return `${basePath}sweater.jpg`;
+      } else {
+        return `${basePath}tshirt.jpg`;
+      }
+    } else if (type === 'bottom') {
+      if (temperature < 15) {
+        return `${basePath}warm-pants.jpg`;
+      } else {
+        return `${basePath}shorts.jpg`;
+      }
+    }
+    return `${basePath}placeholder.jpg`;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -92,13 +115,27 @@ const WeatherDisplay = () => {
 
         <Card className="p-6 backdrop-blur-lg bg-white/90">
           <h2 className="text-xl font-bold mb-4">Recommended Outfit</h2>
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
-              <h3 className="font-semibold">Top:</h3>
+              <h3 className="font-semibold mb-2">Top:</h3>
+              <AspectRatio ratio={16/9} className="bg-muted rounded-md overflow-hidden mb-2">
+                <img
+                  src={getClothingImage('top', weather.condition, weather.temperature)}
+                  alt={recommendation.top.description}
+                  className="object-cover w-full h-full"
+                />
+              </AspectRatio>
               <p className="text-gray-600">{recommendation.top.description}</p>
             </div>
             <div>
-              <h3 className="font-semibold">Bottom:</h3>
+              <h3 className="font-semibold mb-2">Bottom:</h3>
+              <AspectRatio ratio={16/9} className="bg-muted rounded-md overflow-hidden mb-2">
+                <img
+                  src={getClothingImage('bottom', weather.condition, weather.temperature)}
+                  alt={recommendation.bottom.description}
+                  className="object-cover w-full h-full"
+                />
+              </AspectRatio>
               <p className="text-gray-600">{recommendation.bottom.description}</p>
             </div>
             {recommendation.accessories.length > 0 && (
