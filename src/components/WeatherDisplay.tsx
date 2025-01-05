@@ -5,10 +5,22 @@ import { getWeather, WeatherData } from '@/services/weatherService';
 import { getClothingRecommendation } from '@/services/clothingService';
 import { useToast } from '@/components/ui/use-toast';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import ClosetManager from './ClosetManager';
+
+interface ClothingItem {
+  id: string;
+  type: 'top' | 'bottom';
+  imageUrl: string;
+  tempRange: {
+    min: number;
+    max: number;
+  };
+}
 
 const WeatherDisplay = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [personalCloset, setPersonalCloset] = useState<ClothingItem[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -58,26 +70,21 @@ const WeatherDisplay = () => {
     }
   };
 
-  const getClothingImage = (type: string, condition: string, temperature: number) => {
-    // Base path for clothing images
-    const basePath = '/clothing/';
-    
-    if (type === 'top') {
-      if (temperature < 10) {
-        return `${basePath}winter-coat.jpg`;
-      } else if (temperature < 20) {
-        return `${basePath}sweater.jpg`;
-      } else {
-        return `${basePath}tshirt.jpg`;
-      }
-    } else if (type === 'bottom') {
-      if (temperature < 15) {
-        return `${basePath}warm-pants.jpg`;
-      } else {
-        return `${basePath}shorts.jpg`;
-      }
+  const getPersonalClothingImage = (type: string, temperature: number) => {
+    const matchingItems = personalCloset.filter(
+      item => item.type === type && 
+      temperature >= item.tempRange.min && 
+      temperature <= item.tempRange.max
+    );
+
+    if (matchingItems.length > 0) {
+      // Randomly select one matching item
+      const randomIndex = Math.floor(Math.random() * matchingItems.length);
+      return matchingItems[randomIndex].imageUrl;
     }
-    return `${basePath}placeholder.jpg`;
+
+    // Fallback to default images if no personal items match
+    return getClothingImage(type, weather?.condition || 'sunny', temperature);
   };
 
   if (loading) {
@@ -98,7 +105,7 @@ const WeatherDisplay = () => {
 
   return (
     <div className={`min-h-screen bg-${weather.condition} p-6 animate-fade-in`}>
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="max-w-3xl mx-auto space-y-6">
         <Card className="p-6 backdrop-blur-lg bg-white/90">
           <div className="flex items-center justify-between mb-6">
             {getWeatherIcon(weather.condition)}
@@ -113,6 +120,8 @@ const WeatherDisplay = () => {
           </div>
         </Card>
 
+        <ClosetManager onClothingUpdate={setPersonalCloset} />
+
         <Card className="p-6 backdrop-blur-lg bg-white/90">
           <h2 className="text-xl font-bold mb-4">Recommended Outfit</h2>
           <div className="space-y-6">
@@ -120,7 +129,7 @@ const WeatherDisplay = () => {
               <h3 className="font-semibold mb-2">Top:</h3>
               <AspectRatio ratio={16/9} className="bg-muted rounded-md overflow-hidden mb-2">
                 <img
-                  src={getClothingImage('top', weather.condition, weather.temperature)}
+                  src={getPersonalClothingImage('top', weather.temperature)}
                   alt={recommendation.top.description}
                   className="object-cover w-full h-full"
                 />
@@ -131,7 +140,7 @@ const WeatherDisplay = () => {
               <h3 className="font-semibold mb-2">Bottom:</h3>
               <AspectRatio ratio={16/9} className="bg-muted rounded-md overflow-hidden mb-2">
                 <img
-                  src={getClothingImage('bottom', weather.condition, weather.temperature)}
+                  src={getPersonalClothingImage('bottom', weather.temperature)}
                   alt={recommendation.bottom.description}
                   className="object-cover w-full h-full"
                 />
