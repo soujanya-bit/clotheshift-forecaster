@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { getWeather, WeatherData } from '@/services/weatherService';
 import { getClothingRecommendation } from '@/services/clothingService';
 import { useToast } from '@/components/ui/use-toast';
-import ClosetManager from './ClosetManager';
 import WeatherCard from './weather/WeatherCard';
 import OutfitRecommendation from './weather/OutfitRecommendation';
 
@@ -90,7 +89,6 @@ const WeatherDisplay = () => {
     <div className={`min-h-screen bg-${weather.condition} p-6 animate-fade-in`}>
       <div className="max-w-3xl mx-auto space-y-6">
         <WeatherCard weather={weather} />
-        <ClosetManager onClothingUpdate={setPersonalCloset} />
         <OutfitRecommendation 
           recommendation={recommendation}
           getPersonalClothingImage={getPersonalClothingImage}
