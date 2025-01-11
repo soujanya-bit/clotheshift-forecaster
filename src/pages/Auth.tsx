@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { AuthError } from "@supabase/supabase-js";
+import { AuthError, AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -25,7 +25,13 @@ const Auth = () => {
       if (event === "USER_UPDATED" && !session) {
         const authError = new URLSearchParams(window.location.hash).get("error_description");
         if (authError) {
-          setError(decodeURIComponent(authError));
+          const decodedError = decodeURIComponent(authError);
+          setError(decodedError);
+          toast({
+            variant: "destructive",
+            title: "Authentication Error",
+            description: decodedError,
+          });
         }
       }
     });
@@ -38,7 +44,7 @@ const Auth = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -72,14 +78,6 @@ const Auth = () => {
               },
             }}
             providers={[]}
-            onError={(error: AuthError) => {
-              setError(error.message);
-              toast({
-                variant: "destructive",
-                title: "Authentication Error",
-                description: error.message,
-              });
-            }}
           />
         </CardContent>
       </Card>
