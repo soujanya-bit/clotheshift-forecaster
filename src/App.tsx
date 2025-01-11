@@ -8,6 +8,7 @@ import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Closet from "./pages/Closet";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Index />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/closet"
+            element={
+              <ProtectedRoute>
+                <Closet />
               </ProtectedRoute>
             }
           />
