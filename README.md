@@ -1,18 +1,22 @@
-# Welcome to your Lovable project
+
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/5cb2f507-d09e-4628-8d38-4d1680251b29
+Fashion forecast is a smart recommendation system that suggests outfits based on the current and forecasted weather conditions. It combines weather data with fashion insights to provide users with personalized clothing suggestions that are both stylish and practical.
 
-## How can I edit this code?
+Features
 
-There are several ways of editing your application.
+Weather-Based Recommendations: Get outfit suggestions tailored to the temperature, precipitation, and weather conditions.
 
-**Use Lovable**
+Closet Integration: Users can input the clothes they already own into a virtual closet, and the system will suggest outfits accordingly.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5cb2f507-d09e-4628-8d38-4d1680251b29) and start prompting.
+Personalization: Customize recommendations based on your style preferences and wardrobe.
 
-Changes made via Lovable will be committed automatically to this repo.
+Real-Time Updates: Stay updated with outfit suggestions as weather changes.
+
+Seasonal Insights: Receive suggestions that align with seasonal trends and your location.
+
+Multi-Platform Support: Access Fashion Forecast via web or mobile applications.
 
 **Use your preferred IDE**
 
