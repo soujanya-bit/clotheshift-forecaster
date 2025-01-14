@@ -3,34 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import MoodSelector from './closet/MoodSelector';
+import TemperatureRangeSelector from './closet/TemperatureRangeSelector';
+import ClothingGrid from './closet/ClothingGrid';
+import { ClothingItem } from '@/types/clothing';
 
-interface ClothingItem {
-  id: string;
-  type: 'top' | 'bottom';
-  imageUrl: string;
-  tempRange: {
-    min: number;
-    max: number;
-  };
-  mood?: string;
+interface ClosetManagerProps {
+  onClothingUpdate: (items: ClothingItem[]) => void;
 }
 
-const moods = [
-  'vibrant',
-  'cozy',
-  'professional',
-  'sad',
-  'tired',
-  'pinteresty',
-  'baddie',
-  'creative',
-  'sophisticated',
-  'motivated'
-] as const;
-
-const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: ClothingItem[]) => void }) => {
+const ClosetManager = ({ onClothingUpdate }: ClosetManagerProps) => {
   const [clothingItems, setClothingItems] = useState<ClothingItem[]>([]);
   const [selectedType, setSelectedType] = useState<'top' | 'bottom'>('top');
   const [tempRange, setTempRange] = useState({ min: 0, max: 30 });
@@ -41,7 +23,6 @@ const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: Clothin
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Create a URL for the uploaded image
     const imageUrl = URL.createObjectURL(file);
     
     const newItem: ClothingItem = {
@@ -76,36 +57,9 @@ const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: Clothin
             <option value="bottom">Bottom</option>
           </select>
           
-          <Select onValueChange={setSelectedMood}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select mood" />
-            </SelectTrigger>
-            <SelectContent>
-              {moods.map((mood) => (
-                <SelectItem key={mood} value={mood}>
-                  {mood.charAt(0).toUpperCase() + mood.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="flex items-center gap-2">
-            <Input
-              type="number"
-              placeholder="Min °C"
-              value={tempRange.min}
-              onChange={(e) => setTempRange({ ...tempRange, min: Number(e.target.value) })}
-              className="w-24"
-            />
-            <span>to</span>
-            <Input
-              type="number"
-              placeholder="Max °C"
-              value={tempRange.max}
-              onChange={(e) => setTempRange({ ...tempRange, max: Number(e.target.value) })}
-              className="w-24"
-            />
-          </div>
+          <MoodSelector onMoodChange={setSelectedMood} />
+          <TemperatureRangeSelector tempRange={tempRange} onTempRangeChange={setTempRange} />
+          
           <Input
             type="file"
             accept="image/*"
@@ -114,24 +68,7 @@ const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: Clothin
           />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {clothingItems.map((item) => (
-            <div key={item.id} className="relative">
-              <AspectRatio ratio={1}>
-                <img
-                  src={item.imageUrl}
-                  alt={`${item.type} clothing`}
-                  className="object-cover rounded-md"
-                />
-              </AspectRatio>
-              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 rounded-b-md">
-                <p className="text-sm capitalize">{item.type}</p>
-                <p className="text-xs">{item.tempRange.min}°C - {item.tempRange.max}°C</p>
-                {item.mood && <p className="text-xs capitalize">Mood: {item.mood}</p>}
-              </div>
-            </div>
-          ))}
-        </div>
+        <ClothingGrid items={clothingItems} />
       </div>
     </Card>
   );
