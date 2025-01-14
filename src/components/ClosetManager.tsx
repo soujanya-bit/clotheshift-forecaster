@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 import MoodSelector from './closet/MoodSelector';
 import TemperatureRangeSelector from './closet/TemperatureRangeSelector';
 import ClothingGrid from './closet/ClothingGrid';
+import LayeringSuggestions from './closet/LayeringSuggestions';
 import { ClothingItem } from '@/types/clothing';
 
 interface ClosetManagerProps {
@@ -44,33 +45,40 @@ const ClosetManager = ({ onClothingUpdate }: ClosetManagerProps) => {
   };
 
   return (
-    <Card className="p-6 backdrop-blur-lg bg-white/90">
-      <h2 className="text-xl font-bold mb-4">My Closet</h2>
-      <div className="space-y-4">
-        <div className="flex flex-wrap gap-4">
-          <select
-            className="border rounded p-2"
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value as 'top' | 'bottom')}
-          >
-            <option value="top">Top</option>
-            <option value="bottom">Bottom</option>
-          </select>
-          
-          <MoodSelector onMoodChange={setSelectedMood} />
-          <TemperatureRangeSelector tempRange={tempRange} onTempRangeChange={setTempRange} />
-          
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="max-w-xs"
-          />
+    <div className="space-y-6">
+      <Card className="p-6 backdrop-blur-lg bg-white/90">
+        <h2 className="text-xl font-bold mb-4">Add to Closet</h2>
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-4">
+            <select
+              className="border rounded p-2"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value as 'top' | 'bottom')}
+            >
+              <option value="top">Top</option>
+              <option value="bottom">Bottom</option>
+            </select>
+            
+            <MoodSelector onMoodChange={setSelectedMood} />
+            <TemperatureRangeSelector tempRange={tempRange} onTempRangeChange={setTempRange} />
+            
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="max-w-xs"
+            />
+          </div>
         </div>
+      </Card>
 
+      <LayeringSuggestions items={clothingItems} />
+      
+      <Card className="p-6 backdrop-blur-lg bg-white/90">
+        <h2 className="text-xl font-bold mb-4">My Clothes</h2>
         <ClothingGrid items={clothingItems} />
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 };
 
