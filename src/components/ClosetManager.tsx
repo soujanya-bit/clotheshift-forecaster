@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ClothingItem {
   id: string;
@@ -13,12 +14,27 @@ interface ClothingItem {
     min: number;
     max: number;
   };
+  mood?: string;
 }
+
+const moods = [
+  'vibrant',
+  'cozy',
+  'professional',
+  'sad',
+  'tired',
+  'pinteresty',
+  'baddie',
+  'creative',
+  'sophisticated',
+  'motivated'
+] as const;
 
 const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: ClothingItem[]) => void }) => {
   const [clothingItems, setClothingItems] = useState<ClothingItem[]>([]);
   const [selectedType, setSelectedType] = useState<'top' | 'bottom'>('top');
   const [tempRange, setTempRange] = useState({ min: 0, max: 30 });
+  const [selectedMood, setSelectedMood] = useState<string>('');
   const { toast } = useToast();
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +48,8 @@ const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: Clothin
       id: Date.now().toString(),
       type: selectedType,
       imageUrl,
-      tempRange: tempRange
+      tempRange,
+      mood: selectedMood
     };
 
     const updatedItems = [...clothingItems, newItem];
@@ -49,7 +66,7 @@ const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: Clothin
     <Card className="p-6 backdrop-blur-lg bg-white/90">
       <h2 className="text-xl font-bold mb-4">My Closet</h2>
       <div className="space-y-4">
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <select
             className="border rounded p-2"
             value={selectedType}
@@ -58,6 +75,20 @@ const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: Clothin
             <option value="top">Top</option>
             <option value="bottom">Bottom</option>
           </select>
+          
+          <Select onValueChange={setSelectedMood}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select mood" />
+            </SelectTrigger>
+            <SelectContent>
+              {moods.map((mood) => (
+                <SelectItem key={mood} value={mood}>
+                  {mood.charAt(0).toUpperCase() + mood.slice(1)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <div className="flex items-center gap-2">
             <Input
               type="number"
@@ -96,6 +127,7 @@ const ClosetManager = ({ onClothingUpdate }: { onClothingUpdate: (items: Clothin
               <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 rounded-b-md">
                 <p className="text-sm capitalize">{item.type}</p>
                 <p className="text-xs">{item.tempRange.min}°C - {item.tempRange.max}°C</p>
+                {item.mood && <p className="text-xs capitalize">Mood: {item.mood}</p>}
               </div>
             </div>
           ))}

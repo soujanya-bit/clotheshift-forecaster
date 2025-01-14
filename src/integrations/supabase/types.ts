@@ -14,6 +14,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string
+          mood: string | null
           temp_range_max: number
           temp_range_min: number
           type: string
@@ -23,6 +24,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url: string
+          mood?: string | null
           temp_range_max: number
           temp_range_min: number
           type: string
@@ -32,6 +34,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string
+          mood?: string | null
           temp_range_max?: number
           temp_range_min?: number
           type?: string
