@@ -1,15 +1,30 @@
 import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { moods } from "@/types/clothing";
-import { moodStyleMap } from "@/utils/moodStyles";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { moodStyleMap } from "@/utils/moodStyles";
+import { moodCategories } from "@/types/moods";
+import { Smile, Briefcase, Coffee, Sparkles, Moon, Building, Frown, Palette, Zap, Heart, Cloud, User } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface MoodSelectorProps {
   onMoodChange: (mood: string) => void;
 }
 
+const moodIcons: Record<string, React.ReactNode> = {
+  vibrant: <Sparkles className="w-5 h-5" />,
+  professional: <Briefcase className="w-5 h-5" />,
+  cozy: <Coffee className="w-5 h-5" />,
+  sad: <Frown className="w-5 h-5" />,
+  tired: <Moon className="w-5 h-5" />,
+  pinteresty: <Heart className="w-5 h-5" />,
+  baddie: <User className="w-5 h-5" />,
+  creative: <Palette className="w-5 h-5" />,
+  sophisticated: <Building className="w-5 h-5" />,
+  motivated: <Zap className="w-5 h-5" />
+};
+
 const MoodSelector = ({ onMoodChange }: MoodSelectorProps) => {
   const [selectedMood, setSelectedMood] = useState<string>("");
+  const [previewMood, setPreviewMood] = useState<string>("");
 
   const handleMoodChange = (mood: string) => {
     setSelectedMood(mood);
@@ -17,51 +32,71 @@ const MoodSelector = ({ onMoodChange }: MoodSelectorProps) => {
   };
 
   return (
-    <HoverCard>
-      <HoverCardTrigger asChild>
-        <div>
-          <Select onValueChange={handleMoodChange} value={selectedMood}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select mood" />
-            </SelectTrigger>
-            <SelectContent>
-              {moods.map((mood) => (
-                <SelectItem key={mood} value={mood}>
-                  {mood.charAt(0).toUpperCase() + mood.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </HoverCardTrigger>
-      {selectedMood && (
-        <HoverCardContent className="w-80">
-          <div className="space-y-2">
-            <h4 className="font-medium">{selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1)} Style Guide</h4>
-            <div 
-              className="h-2 w-full rounded-full mb-2"
-              style={{ background: moodStyleMap[selectedMood].gradient }}
-            />
-            <p className="text-sm text-muted-foreground">
-              {moodStyleMap[selectedMood].styleGuide}
-            </p>
-            <div className="mt-2">
-              <p className="text-sm font-medium">Suggested Patterns:</p>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {moodStyleMap[selectedMood].patterns.map((pattern, index) => (
-                  <span
-                    key={index}
-                    className="text-xs bg-secondary px-2 py-1 rounded-full"
+    <div className="w-full max-w-2xl space-y-4">
+      {moodCategories.map((category) => (
+        <div key={category.name} className="space-y-2">
+          <h3 className="text-sm font-medium text-muted-foreground">{category.name}</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+            {category.moods.map((mood) => (
+              <HoverCard key={mood} openDelay={200}>
+                <HoverCardTrigger asChild>
+                  <button
+                    onClick={() => handleMoodChange(mood)}
+                    onMouseEnter={() => setPreviewMood(mood)}
+                    onMouseLeave={() => setPreviewMood("")}
+                    className={cn(
+                      "group relative flex items-center gap-2 p-3 rounded-lg transition-all duration-300",
+                      "hover:scale-105 active:scale-95",
+                      "animate-fade-in",
+                      selectedMood === mood ? "ring-2 ring-primary" : "hover:ring-1 ring-muted",
+                      "focus:outline-none focus:ring-2 focus:ring-primary"
+                    )}
+                    style={{
+                      background: moodStyleMap[mood].gradient,
+                    }}
                   >
-                    {pattern}
-                  </span>
-                ))}
-              </div>
-            </div>
+                    <div className="text-white">
+                      {moodIcons[mood]}
+                    </div>
+                    <span className="text-sm font-medium text-white capitalize">
+                      {mood}
+                    </span>
+                  </button>
+                </HoverCardTrigger>
+                <HoverCardContent 
+                  className="w-80 animate-fade-in" 
+                  align="start"
+                >
+                  <div className="space-y-2">
+                    <h4 className="font-medium capitalize">{mood} Style Guide</h4>
+                    <div 
+                      className="h-2 w-full rounded-full mb-2"
+                      style={{ background: moodStyleMap[mood].gradient }}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      {moodStyleMap[mood].styleGuide}
+                    </p>
+                    <div className="mt-2">
+                      <p className="text-sm font-medium">Suggested Patterns:</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {moodStyleMap[mood].patterns.map((pattern, index) => (
+                          <span
+                            key={index}
+                            className="text-xs bg-secondary px-2 py-1 rounded-full"
+                          >
+                            {pattern}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            ))}
           </div>
-        </HoverCardContent>
-      )}
-    </HoverCard>
+        </div>
+      ))}
+    </div>
   );
 };
 
